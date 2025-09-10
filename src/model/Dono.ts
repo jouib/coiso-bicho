@@ -15,17 +15,20 @@ export class Dono {
 
     /**
      * Construtor da classe Hotel.
+     * @param nome - Nome do dono
      * @param telefone - Telefone do dono
      * @param email - Email do dono
      * @param dataCadastro - Data de cadastro
      * @param endereco - Endereço do Dono
      */
     constructor(
+        nome: string,
         telefone: string,
         email: string,
         dataCadastro: Date,
         endereco: string
     ) {
+        this.nome = nome;
         this.telefone = telefone;
         this.email = email;
         this.dataCadastro = dataCadastro;
@@ -38,7 +41,7 @@ export class Dono {
      * Retorna o ID do dono.
      * @returns ID do dono
      */
-    public getIdHotel(): number {
+    public getIdDono(): number {
         return this.idDono;
     }
 
@@ -167,52 +170,28 @@ export class Dono {
      */
     static async cadastroDono(dono: Dono): Promise<boolean> {
         try {
-            // Query para inserir um novo hotel no banco de dados
-            const queryInsertHotel = `
-                INSERT INTO hotel 
-                (nome_fantasia, data_fundacao, quantidade_quartos, categoria_estrelas, status_hotel)
+            // Query para inserir um novo dono no banco de dados
+            const queryInsertDono = `
+                INSERT INTO dono 
+                (nome, telefone, email, data_cadastro, endereco)
                 VALUES ($1, $2, $3, $4, $5)
-                RETURNING id_hotel;
+                RETURNING id_dono;
             `;
 
             // Valores a serem inseridos
             const valores = [
-                hotel.getNomeFantasia(),
-                hotel.getDataFundacao(),
-                hotel.getQuantidadeQuartos(),
-                hotel.getCategoriaEstrelas(),
-                hotel.getStatusHotel()
+                dono.getNome(),
+                dono.getTelefone(),
+                dono.getEmail(),
+                dono.getDataCadastro(),
+                dono.getEndereco()
             ];
 
             // Executa a query e verifica se foi bem-sucedida
-            const respostaBD = await database.query(queryInsertHotel, valores);
+            const respostaBD = await database.query(queryInsertDono, valores);
             return respostaBD.rowCount !== 0;
         } catch (error) {
-            console.error('Erro ao cadastrar hotel:', error);
-            return false;
-        }
-    }
-
-    /**
-     * Método para remover (desativar) um hotel no banco de dados.
-     * @param id_Hotel - ID do hotel a ser removido
-     * @returns Retorna true se a remoção foi bem-sucedida, false caso contrário
-     */
-    static async removerHotel(id_Hotel: number): Promise<boolean> {
-        try {
-            // Query para desativar o hotel (mudar status para false)
-            const queryDeleteHotel = `
-                UPDATE hotel
-                SET status_hotel = FALSE 
-                WHERE id_hotel = $1
-                RETURNING id_hotel;
-            `;
-            
-            // Executa a query e verifica se foi bem-sucedida
-            const result = await database.query(queryDeleteHotel, [id_Hotel]);
-            return result.rowCount !== 0;
-        } catch (error) {
-            console.error(`Erro ao remover hotel: ${error}`);
+            console.error('Erro ao cadastrar dono:', error);
             return false;
         }
     }
@@ -222,35 +201,35 @@ export class Dono {
      * @param hotel - Objeto Hotel contendo as informações atualizadas
      * @returns Retorna true se a atualização foi bem-sucedida, false caso contrário
      */
-    static async atualizarHotel(hotel: Hotel): Promise<boolean> {
+    static async atualizarDono(dono: Dono): Promise<boolean> {
         try {
-            // Query para atualizar os dados do hotel
-            const queryAtualizarHotel = `
-                UPDATE hotel SET 
-                    nome_fantasia = $1,
-                    data_fundacao = $2,
-                    quantidade_quartos = $3,
-                    categoria_estrelas = $4,
-                    status_hotel = $5
-                WHERE id_hotel = $6
-                RETURNING id_hotel;
+            // Query para atualizar os dados do dono
+            const queryAtualizarDono = `
+                UPDATE dono SET 
+                    nome = $1,
+                    telefone = $2,
+                    email = $3,
+                    data_cadastro = $4,
+                    endereco = $5
+                WHERE id_dono = $6
+                RETURNING id_dono;
             `;
 
             // Valores a serem atualizados
             const valores = [
-                hotel.getNomeFantasia(),
-                hotel.getDataFundacao(),
-                hotel.getQuantidadeQuartos(),
-                hotel.getCategoriaEstrelas(),
-                hotel.getStatusHotel(),
-                hotel.getIdHotel()
+                dono.getNome(),
+                dono.getTelefone(),
+                dono.getEmail(),
+                dono.getDataCadastro(),
+                dono.getEndereco(),
+                dono.getIdDono()
             ];
 
             // Executa a query e verifica se foi bem-sucedida
-            const result = await database.query(queryAtualizarHotel, valores);
+            const result = await database.query(queryAtualizarDono, valores);
             return result.rowCount !== 0;
         } catch (error) {
-            console.error(`Erro ao atualizar hotel: ${error}`);
+            console.error(`Erro ao atualizar dono: ${error}`);
             return false;
         }
     }
